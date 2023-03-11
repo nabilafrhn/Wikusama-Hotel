@@ -29,6 +29,7 @@ const login = async (req, res) => {
             id_user: findUser.id_customer,
             email: findUser.email,
             role: findUser.role,
+            user_name: findUser.user_name,
         };
         tokenPayload = JSON.stringify(tokenPayload);
         let token = await jsonwebtoken.sign(tokenPayload, SECRET_KEY);
@@ -41,6 +42,7 @@ const login = async (req, res) => {
                 id_user: findUser.id_user,
                 email: findUser.email,
                 role: findUser.role,
+                user_name: findUser.user_name,
             },
         });
     } catch (err) {
