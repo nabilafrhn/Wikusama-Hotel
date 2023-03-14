@@ -5,11 +5,13 @@ export default class Header extends React.Component {
         super(props)
         this.state = {
             role: "",
-            email: ""
+            email: "", 
+            photo: ""
         }
 
         this.state.role = localStorage.getItem("role")
         this.state.email = localStorage.getItem("email")
+        this.state.photo = localStorage.getItem("photo")
     }
 
 
@@ -24,7 +26,7 @@ export default class Header extends React.Component {
                     <div class="flex ml-auto mr-6">
                         <a href class="flex flex-row items-center">
                             <img
-                                src="https://pbs.twimg.com/profile_images/378800000298815220/b567757616f720812125bfbac395ff54_normal.png"
+                                src={this.state.photo}
                                 alt=""
                                 class="h-10 w-10 bg-gray-200 border rounded-full"
                             />
