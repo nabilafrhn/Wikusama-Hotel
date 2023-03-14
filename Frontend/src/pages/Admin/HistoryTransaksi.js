@@ -28,10 +28,9 @@ export default class HistoryTransaksi extends React.Component {
             booking_status: "",
             role: "",
             token: "",
-            action: ""
+            action: "",
+            keyword: ""
         }
-        console.log("state", this.state.booking);
-
         if (localStorage.getItem("token")) {
             if (localStorage.getItem("role") === "admin" ||
                 localStorage.getItem("role") === "resepsionis") {
@@ -106,6 +105,27 @@ export default class HistoryTransaksi extends React.Component {
         }
     }
 
+    handleSearch = () => {
+        let data = {
+            keyword: this.state.keyword
+        }
+        let url = "http://localhost:8080/booking/find/filter"
+        axios.post(url, data)
+            .then(response => {
+                if (response.status === 200) {
+                    this.setState({
+                        booking: response.data.data
+                    })
+                } else {
+                    alert(response.data.message)
+                    this.setState({ message: response.data.message })
+                }
+            })
+            .catch(error => {
+                console.log("error", error.response.status)
+            })
+    }
+
     getBooking = () => {
         let url = "http://localhost:8080/booking/"
         axios.get(url)
@@ -141,19 +161,21 @@ export default class HistoryTransaksi extends React.Component {
                 <main class="main flex flex-col flex-grow -ml-64 md:ml-0 transition-all duration-150 ease-in">
                     <Header title={title} />
                     <div class="main-content flex flex-col flex-grow p-4">
-                        <div class="mb-4">
-                            <div className="flex flex-row items-center">
-                                <h1 class='text-2xl font-bold mr-20'>Transaction History</h1>
-                                <div className="flex rounded w-1/2">
-                                    <input
-                                        type="text"
-                                        className="w-5/6 block px-4 py-2 text-sky-700 bg-white border rounded-md focus:border-sky-400 focus:ring-sky-300 focus:outline-none focus:ring focus:ring-opacity-40 "
-                                        placeholder="Search..."
-                                    />
+                        <div class="mb-4 flex flex-row">
+                            <div className="justify-items-center w-1/2">
+                                <div className="rounded ml-5">
+                                    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+                                    <div class="relative">
+                                        <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                        </div>
+                                        <input type="search" id="default-search" class="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-sky-500 focus:border-sky-500" placeholder="Please search only by booking number" name='keyword' value={this.state.keyword} onChange={this.handleChange} />
+                                        <button type="submit" class="text-white absolute right-2.5 bottom-2.5 bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-4 py-2" onClick={this.handleSearch}>Search</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
+                        <div class="overflow-hidden rounded-lg border border-gray-200 shadow-md mx-5">
                             <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
                                 <thead class="bg-gray-50">
                                     <tr>
@@ -190,22 +212,7 @@ export default class HistoryTransaksi extends React.Component {
                                                 </td>
                                                 {this.state.role === 'resepsionis' && (
                                                     <td class="px-4 py-4">
-                                                        <button onClick={() => this.handleEdit(item)}>
-                                                            {/* <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke-width="1.5"
-                                                                stroke="currentColor"
-                                                                class="h-6 w-6"
-                                                                x-tooltip="tooltip"
-                                                            >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-                                                                />
-                                                            </svg> */}
+                                                        <button className='bg-sky-600 rounded py-2 px-4 text-white font-bold' onClick={() => this.handleEdit(item)}>
                                                             Edit
                                                         </button>
                                                     </td>
@@ -217,7 +224,6 @@ export default class HistoryTransaksi extends React.Component {
                             </table>
                         </div>
                     </div>
-
                     <footer class="footer px-4 py-2">
                         <div class="footer-content">
                             <p class="text-sm text-gray-600 text-center">© ukk hotel wikusama</p>

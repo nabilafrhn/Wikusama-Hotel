@@ -143,7 +143,7 @@ export default class Sidebar extends React.Component {
               <li class="mt-40 mb-0 px-3">
                 <a
                   href="/"
-                    class="flex flex-row items-center h-14 px-3 rounded-lg text-sky-800 bg-sky-100 hover:bg-sky-200 hover:text-gray-700 mt-60"
+                    class="flex flex-row items-center h-14 px-3 rounded-lg text-sky-800 hover:bg-sky-200 hover:text-gray-700 mt-60"
                 >
                   <span class="mr-3 flex items-center justify-center text-lg text-red-400">
                     <FontAwesomeIcon icon={faRightFromBracket} />

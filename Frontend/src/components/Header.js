@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 export default class Header extends React.Component {
     constructor(props) {
@@ -25,11 +25,6 @@ export default class Header extends React.Component {
                     </div>
                     <div class="flex ml-auto mr-6">
                         <a href class="flex flex-row items-center">
-                            <img
-                                src={this.state.photo}
-                                alt=""
-                                class="h-10 w-10 bg-gray-200 border rounded-full"
-                            />
                             <span class="flex flex-col ml-2">
                                 <span class="truncate w-30 h-5 font-semibold tracking-wide leading-none">{this.state.email}</span>
                                 <span class="truncate w-40 text-gray-500 text-xs leading-none mt-1">{this.state.role}</span>

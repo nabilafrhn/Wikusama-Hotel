@@ -1,6 +1,4 @@
 const sequelize = require("sequelize");
-// const moment = require("moment");
-
 const Op = sequelize.Op;
 
 const model = require("../models/index");
@@ -276,7 +274,7 @@ const findBookingDataFilter = async (req, res) => {
     try {
         const keyword = req.body.keyword
         const checkInDate = new Date(req.body.check_in_date);
-        const checOutDate = new Date(req.body.check_out_date);
+        const checkOutDate = new Date(req.body.check_out_date);
 
         const result = await booking.findAll({
             include: ["user", "room_type", "customer"],
@@ -286,13 +284,13 @@ const findBookingDataFilter = async (req, res) => {
                     name_customer: { [Op.like]: `%${keyword}%` },
                     email: { [Op.like]: `%${keyword}%` },
                     guest_name: { [Op.like]: `%${keyword}%` },
+                    booking_status: { [Op.like]: `%${keyword}%` },
                     check_in_date: {
-                        [Op.between]: [checkInDate, checOutDate],
+                        [Op.between]: [checkInDate, checkOutDate],
                     },
                 }
             }
         });
-
         return res.status(200).json({
             message: "Succes to get all booking by filter",
             count: result.length,
@@ -349,7 +347,10 @@ const findBookingByIdCustomer = async (req, res) => {
             });
         }
 
-        const result = await booking.findAll({ where: params })
+        const result = await booking.findAll({
+            where: params,
+            include: ["room_type"],
+        })
         return res.status(200).json({
             message: "Succes to get all booking by id customer",
             count: result.length,

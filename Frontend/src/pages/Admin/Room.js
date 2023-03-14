@@ -1,22 +1,24 @@
 import React from 'react';
 import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
+import axios from "axios";
+import $ from "jquery";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios"
-import $ from "jquery";
 
 export default class Room extends React.Component {
     constructor() {
         super()
         this.state = {
             room: [],
+            typeroom: [],
             id_room_type: "",
             id_room: "",
             name_room_type: "",
             room_number: "",
             role: "",
             token: "",
+            keyword: "",
             action: ""
         }
 
@@ -44,7 +46,6 @@ export default class Room extends React.Component {
             [e.target.name]: e.target.value
         })
     }
-
 
     handleClose = () => {
         $("#modal_room").hide()
@@ -118,12 +119,46 @@ export default class Room extends React.Component {
         }
     }
 
+    handleSearch = () => {
+        let data = {
+            keyword: this.state.keyword
+        }
+        let url = "http://localhost:8080/room/find/filter"
+        axios.post(url, data)
+            .then(response => {
+                if (response.status === 200) {
+                    this.setState({
+                        room: response.data.data
+                    })
+                } else {
+                    alert(response.data.message)
+                    this.setState({ message: response.data.message })
+                }
+            })
+            .catch(error => {
+                console.log("error", error.response.status)
+            })
+    }
+
     getRoom = () => {
         let url = "http://localhost:8080/room/"
         axios.get(url)
             .then(response => {
                 this.setState({
                     room: response.data.data
+                })
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
+
+    getTypeRoom = () => {
+        let url = "http://localhost:8080/room-type"
+        axios.get(url)
+            .then(response => {
+                this.setState({
+                    typeroom: response.data.data
                 })
             })
             .catch((error) => {
@@ -142,6 +177,7 @@ export default class Room extends React.Component {
     componentDidMount() {
         this.getRoom()
         this.checkRole()
+        this.getTypeRoom()
     }
 
     render() {
@@ -152,20 +188,22 @@ export default class Room extends React.Component {
                 <main class="main flex flex-col flex-grow -ml-64 md:ml-0 transition-all duration-150 ease-in">
                     <Header title={room} />
                     <div class="main-content flex flex-col flex-grow p-4">
-                        <div class="mb-4">
-                            <div className="flex flex-row items-center">
-                                <h1 class='text-2xl font-bold mr-20'>List Room</h1>
-                                <div className="flex rounded w-1/2">
-                                    <input
-                                        type="text"
-                                        className="w-5/6 block px-4 py-2 text-sky-700 bg-white border rounded-md focus:border-sky-400 focus:ring-sky-300 focus:outline-none focus:ring focus:ring-opacity-40 "
-                                        placeholder="Search..."
-                                    />
-                                    <button className="w-1/5 ml-2 text-white bg-sky-600 rounded hover:bg-sky-700" onClick={() => this.handleAdd()}>
-                                        <FontAwesomeIcon icon={faPlus} /> Add
-                                    </button>
+                        <div class="mb-4 flex flex-row">
+                            <div className="justify-items-center w-1/2">
+                                <div className="rounded ml-5">
+                                    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+                                    <div class="relative">
+                                        <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                        </div>
+                                        <input type="search" id="default-search" class="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-sky-500 focus:border-sky-500" placeholder="Please search only by room number" name='keyword' value={this.state.keyword} onChange={this.handleChange} />
+                                        <button type="submit" class="text-white absolute right-2.5 bottom-2.5 bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-4 py-2" onClick={this.handleSearch}>Search</button>
+                                    </div>
                                 </div>
                             </div>
+                            <button className="ml-2 px-4 text-white bg-sky-600 rounded hover:bg-sky-700" onClick={() => this.handleAdd()}>
+                                <FontAwesomeIcon icon={faPlus} /> Add
+                            </button>
                         </div>
                         <div class="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
                             <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
@@ -255,8 +293,13 @@ export default class Room extends React.Component {
                                         <input type="number" name="room_number" id="room_number" value={this.state.room_number} onChange={this.handleChange} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" placeholder="Input room number" required />
                                     </div>
                                     <div>
-                                        <label for="id_room_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">ID Room Type</label>
-                                        <input type="number" name="id_room_type" id="id_room_type" value={this.state.id_room_type} onChange={this.handleChange} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" placeholder="Input room type number" required />
+                                        <label for="id_room_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Room Type</label>
+                                        <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-black" placeholder="ID Room Type" name="id_room_type" value={this.state.id_room_type} onChange={this.handleChange} required>
+                                            <option value="">Choose Room Type </option>
+                                            {this.state.typeroom.map((item, index) => (
+                                                <option value={item.id_room_type}>{item.name_room_type}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <button type="submit" class="w-full text-white bg-gradient-to-br from-purple-600 to-sky-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-sky-300 dark:focus:ring-sky-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Simpan</button>
                                 </form>

@@ -14,8 +14,8 @@ router.put("/update/:id_user", auth.authVerify, upload.single("photo"), userCont
 router.delete("/delete/:id_user", auth.authVerify, userController.deleteUser)
 router.get("/", auth.authVerify, userController.findAllUser)
 router.get("/:id_user", auth.authVerify, userController.findOneUser)
-
-
+router.get("/role/resepsionis", userController.findAllUserRoleResepsionis)
+router.post("/find/filter", userController.findUserDataFilter)
 
 module.exports = router
 
