@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // admin side
-import Login from './pages/Admin/Login';
-import Dashboard from './pages/Admin/Dashboard';
+import Login from "./pages/Admin/Login";
+import Dashboard from "./pages/Admin/Dashboard";
 import RoomType from "./pages/Admin/RoomType/RoomType";
 import Room from "./pages/Admin/Room";
 import User from "./pages/Admin/User";
@@ -33,11 +33,13 @@ function App() {
         <Route path="/home" element={<Home />}></Route>
         <Route path="/login" element={<LoginCust />}></Route>
         <Route path="/register" element={<RegisterCust />}></Route>
-        <Route path="/room-type-customer" element={<RoomTypeCustomer />}></Route>
+        <Route
+          path="/room-type-customer"
+          element={<RoomTypeCustomer />}
+        ></Route>
         <Route path="/booking" element={<Booking />}></Route>
       </Routes>
     </BrowserRouter>
-
   );
 }
 

@@ -90,9 +90,9 @@ const updateUser = async (req, res) => {
             id_user: req.params.id_user,
         };
         const data_edit = {
-            user_name: req.body.user_name,
-            email: req.body.email,
-            role: req.body.role,
+          user_name: req.body.user_name,
+          email: req.body.email,
+          role: req.body.role
         };
 
         const result = await user.findOne({ where: params });
